@@ -1,1 +1,1 @@
-# salamanda_project
+# config_project
