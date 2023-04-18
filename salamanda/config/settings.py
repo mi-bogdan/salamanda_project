@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-
+    'rest_framework.authtoken',
+    'djoser',
     'news.apps.NewsConfig',
+
+   
 ]
 
 MIDDLEWARE = [
@@ -133,3 +136,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/meadia/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        
+    ),
+}

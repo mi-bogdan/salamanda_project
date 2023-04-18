@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 
 
+
+
 class Ip(models.Model):  # наша таблица где будут айпи адреса
     """Айпи адреса"""
     ip = models.CharField(max_length=100)
@@ -22,11 +24,14 @@ class Tags(models.Model):
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
 
+
 class Post(models.Model):
     """Посты новостей"""
 
     title = models.CharField(verbose_name="Название", max_length=255)
     description = models.TextField(verbose_name="Описание")
+    author = models.ForeignKey(
+        User, verbose_name='автор', related_name='author', null=True, on_delete=models.CASCADE)
     create_at = models.DateTimeField(
         verbose_name="Дата публикации", auto_now_add=True)
     update_at = models.DateTimeField(
@@ -48,6 +53,7 @@ class Post(models.Model):
         verbose_name = "Новость"
         verbose_name_plural = "Новости"
 
+
 class Review(models.Model):
     """Отзывы"""
     user = models.ForeignKey(
@@ -56,11 +62,10 @@ class Review(models.Model):
     perents = models.ForeignKey(
         'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True, related_name='children')
     post = models.ForeignKey(
-        Post, verbose_name="Кино", on_delete=models.CASCADE, related_name='review')
-    
+        Post, verbose_name="Пост", on_delete=models.CASCADE, related_name='review')
 
     def __str__(self) -> str:
-        return self.post
+        return f'{self.post}-{self.user}'
 
     class Meta:
         verbose_name = "Отзыв"
@@ -69,8 +74,7 @@ class Review(models.Model):
 
 class Profile(models.Model):
     """Профиль пользователя"""
-    user = models.OneToOneField(
-        User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     voted_for = models.ManyToManyField(
         Post, verbose_name='Проголосовали за', blank=True, null=True, related_name='voted_for')
     voted_against = models.ManyToManyField(
@@ -82,9 +86,8 @@ class Profile(models.Model):
     key_word = ArrayField(models.CharField(max_length=200), blank=True)
 
     def __str__(self) -> str:
-        return self.user
+        return f'{self.user}'
 
     class Meta:
         verbose_name = "Профиль"
         verbose_name_plural = "Профили"
-
