@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import PostListSerializers
-from .models import Post, Ip, Tags, Review, Profile
+from .models import Post, Ip, Tags, Review
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +21,5 @@ class ListPostView(APIView):
             count_reviews=Count('review'))
 
         serializers = PostListSerializers(post, many=True)
-        print(request.data)
-        # print(request.META.get('HTTP_X_USERNAME'))
+       
         return Response(serializers.data)

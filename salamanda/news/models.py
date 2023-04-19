@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 
 
-
-
 class Ip(models.Model):  # наша таблица где будут айпи адреса
     """Айпи адреса"""
     ip = models.CharField(max_length=100)
@@ -72,22 +70,4 @@ class Review(models.Model):
         verbose_name_plural = "Отзывы"
 
 
-class Profile(models.Model):
-    """Профиль пользователя"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    voted_for = models.ManyToManyField(
-        Post, verbose_name='Проголосовали за', blank=True, null=True, related_name='voted_for')
-    voted_against = models.ManyToManyField(
-        Post, verbose_name='Проголосовали против', blank=True, null=True, related_name='voted_against')
-    save_post = models.ManyToManyField(
-        Post, verbose_name='Сохраненные', blank=True, null=True, related_name='save_post')
-    img_profile = models.ImageField(
-        verbose_name="Фото_профиля", upload_to='profile/%Y/%m/%d', blank=True, null=True)
-    key_word = ArrayField(models.CharField(max_length=200), blank=True)
 
-    def __str__(self) -> str:
-        return f'{self.user}'
-
-    class Meta:
-        verbose_name = "Профиль"
-        verbose_name_plural = "Профили"

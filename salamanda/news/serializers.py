@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Ip, Tags, Review, Profile
+from .models import Post, Ip, Tags, Review
 
 
 class PostListSerializers(serializers.ModelSerializer):
