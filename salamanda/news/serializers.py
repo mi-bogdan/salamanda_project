@@ -12,3 +12,9 @@ class PostListSerializers(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'title', 'description', 'author',
                   'create_at', 'author', 'count_reviews')
+
+
+class TagsSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Tags
+        fields = '__all__'

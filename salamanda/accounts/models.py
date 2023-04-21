@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from news.models import Post
 
+
 class Profile(models.Model):
     """Профиль пользователя"""
     user = models.OneToOneField(
@@ -14,7 +15,7 @@ class Profile(models.Model):
         Post, verbose_name='Сохраненные', blank=True, null=True, related_name='save_post')
     img_profile = models.ImageField(
         verbose_name="Фото_профиля", upload_to='profile/%Y/%m/%d', blank=True, null=True)
-    
+    key_words = models.TextField(verbose_name='Ключи_рекомендаций', blank=True)
 
     def __str__(self) -> str:
         return f'{self.user}'
