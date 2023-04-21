@@ -6,7 +6,7 @@ from news.models import Post
 class Profile(models.Model):
     """Профиль пользователя"""
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE)
+        User, on_delete=models.CASCADE, related_name='profile')
     voted_for = models.ManyToManyField(
         Post, verbose_name='Проголосовали за', blank=True, null=True, related_name='voted_for')
     voted_against = models.ManyToManyField(
