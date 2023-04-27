@@ -1,26 +1,43 @@
-from django.shortcuts import render
-from .serializers import PostListSerializers, TagsSerializers
+from .serializers import PostListSerializers, TagsSerializers, PostDetailSerializers
 from .models import Post, Ip, Tags, Review
+from .service import add_str_tags
+
+from accounts.models import Profile
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, permissions
 
+
 from django.db.models import Count
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 class ListPostView(APIView):
+    """Получение постов авторизованых пользователей и не авторзованных пользователей """
 
     def get(self, request):
-        # token = request.META.get('HTTP_AUTHORIZATION')
-        # if token:
-        #     pass
-        # else:
-        post = Post.objects.filter(published=True).annotate(
-            count_reviews=Count('review'))
+        token = request.META.get('HTTP_AUTHORIZATION')
 
-        serializers = PostListSerializers(post, many=True)
+        if token:
+            user = User.objects.get(pk=request.user.id)
+            profil = Profile.objects.get(user=user)
+            array_key_word = profil.key_words.split(',')
+            q_list = Q()
+
+            for item in array_key_word:
+                q_list |= Q(title__icontains=item)
+
+            post = Post.objects.filter(q_list).annotate(
+                count_reviews=Count('review'))
+
+            serializers = PostListSerializers(post, many=True)
+
+        else:
+            post = Post.objects.filter(published=True).annotate(
+                count_reviews=Count('review'))
+            serializers = PostListSerializers(post, many=True)
 
         return Response(serializers.data)
 
@@ -40,15 +57,15 @@ class TagsView(APIView):
 
         user = User.objects.get(pk=request.user.id)
 
-        serializers = request.data
-        key_word = []
+        profil = Profile.objects.get(user=user)
+        profil.key_words += add_str_tags(request.data)
+        profil.save()
 
-        for item_dict in serializers:
-            for key, value in item_dict.items():
-                if key == 'title':
-                    key_word.append(value)
-        string = ','.join(key_word)
-       
-
-        
         return Response(status=201)
+
+
+class PostDetailView(APIView):
+    def get(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        serializers = PostDetailSerializers(post)
+        return Response(serializers.data)

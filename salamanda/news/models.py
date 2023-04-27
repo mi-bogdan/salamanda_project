@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-
 class Ip(models.Model):  # наша таблица где будут айпи адреса
     """Айпи адреса"""
     ip = models.CharField(max_length=100)
@@ -68,6 +67,3 @@ class Review(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-
-
-

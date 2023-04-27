@@ -3,7 +3,7 @@ from .models import Post, Ip, Tags, Review
 
 
 class PostListSerializers(serializers.ModelSerializer):
-    """Вывод постов без авторизации"""
+    """Вывод постов"""
     author = serializers.SlugRelatedField(
         slug_field='username', read_only=True)
     count_reviews = serializers.IntegerField()
@@ -15,6 +15,13 @@ class PostListSerializers(serializers.ModelSerializer):
 
 
 class TagsSerializers(serializers.ModelSerializer):
+    """Вывод тегов"""
     class Meta:
         model = Tags
+        fields = '__all__'
+
+
+class PostDetailSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Post
         fields = '__all__'
