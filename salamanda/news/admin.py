@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ip, Post, Tags, Review
+from .models import Ip, Post, Tags, Review, Communities
 
 
 @admin.register(Post)
@@ -28,4 +28,8 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'user')
 
 
-
+@admin.register(Communities)
+class CommunitiesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'description',
+                    'create_at', 'admin_communities')
+    list_display_links = ('id', 'title')

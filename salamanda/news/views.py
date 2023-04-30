@@ -1,6 +1,8 @@
 from .serializers import PostListSerializers, TagsSerializers, PostDetailSerializers
 from .models import Post, Ip, Tags, Review
-from .service import add_str_tags
+
+from service.service_utils import add_str_tags, filter_q_tags
+from service.service_machine_learning_analysis_text_posts import add_analysis_text_posts
 
 from accounts.models import Profile
 
@@ -11,7 +13,6 @@ from rest_framework import generics, permissions
 
 from django.db.models import Count
 from django.contrib.auth.models import User
-from django.db.models import Q
 
 
 class ListPostView(APIView):
@@ -24,12 +25,8 @@ class ListPostView(APIView):
             user = User.objects.get(pk=request.user.id)
             profil = Profile.objects.get(user=user)
             array_key_word = profil.key_words.split(',')
-            q_list = Q()
 
-            for item in array_key_word:
-                q_list |= Q(title__icontains=item)
-
-            post = Post.objects.filter(q_list).annotate(
+            post = Post.objects.filter(filter_q_tags(array_key_word)).annotate(
                 count_reviews=Count('review'))
 
             serializers = PostListSerializers(post, many=True)
@@ -68,4 +65,14 @@ class PostDetailView(APIView):
     def get(self, request, pk):
         post = Post.objects.get(pk=pk)
         serializers = PostDetailSerializers(post)
+
+        token = request.META.get('HTTP_AUTHORIZATION')
+        if token:
+            user = User.objects.get(pk=request.user.id)
+            profile = Profile.objects.get(user=user)
+
+            profile.key_words = add_analysis_text_posts(
+                post.title, profile.key_words.split(','))
+            profile.save()
+
         return Response(serializers.data)

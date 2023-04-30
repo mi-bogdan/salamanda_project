@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from news.models import Post
+from news.models import Post, Communities
 
 
 class Profile(models.Model):
@@ -16,6 +16,7 @@ class Profile(models.Model):
     img_profile = models.ImageField(
         verbose_name="Фото_профиля", upload_to='profile/%Y/%m/%d', blank=True, null=True)
     key_words = models.TextField(verbose_name='Ключи_рекомендаций', blank=True)
+    
 
     def __str__(self) -> str:
         return f'{self.user}'
